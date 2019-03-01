@@ -1,5 +1,6 @@
 import React from "react";
 import styles from "./Layout.module.css";
+import Toolbar from "../Navigation/Toolbar/Toolbar";
 
 interface Props {
   children: JSX.Element[] | JSX.Element;
@@ -7,7 +8,7 @@ interface Props {
 
 const layout = (props: Props) => (
   <React.Fragment>
-    <div>Toolbar, SideDrawer, Backdrop</div>
+    <Toolbar />
     <main className={styles.Content}>{props.children}</main>
   </React.Fragment>
 );
