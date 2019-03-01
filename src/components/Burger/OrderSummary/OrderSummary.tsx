@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "../../UI/Button/Button";
 
 interface Ingredients {
   salad: number;
@@ -10,6 +11,8 @@ interface Ingredients {
 
 interface Props {
   ingredients: Ingredients;
+  purchaseContinued(): void;
+  purchaseCancelled(): void;
 }
 
 const orderSummary = (props: Props) => {
@@ -27,6 +30,12 @@ const orderSummary = (props: Props) => {
       <p>A delicious burger with the following ingredients:</p>
       <ul>{ingredientSummary}</ul>
       <p>Continue to Checkout?</p>
+      <Button clicked={props.purchaseCancelled} btnType="Danger">
+        CANCEL
+      </Button>
+      <Button clicked={props.purchaseContinued} btnType="Success">
+        CONTINUE
+      </Button>
     </React.Fragment>
   );
 };
