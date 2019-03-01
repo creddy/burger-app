@@ -1,21 +1,97 @@
 import React, { Component } from "react";
 import Burger from "../../components/Burger/Burger";
+import BuildControls from "../../components/Burger/BuildControls/BuildControls";
+
+interface Ingredients {
+  salad: number;
+  bacon: number;
+  cheese: number;
+  meat: number;
+  [key: string]: number;
+}
+
+interface DisabledInfo {
+  salad: boolean;
+  bacon: boolean;
+  cheese: boolean;
+  meat: boolean;
+  [key: string]: boolean;
+}
+
+interface State {
+  ingredients: Ingredients;
+  totalPrice: number;
+}
+
+const INGREDIENT_PRICES: Ingredients = {
+  salad: 0.5,
+  cheese: 0.4,
+  meat: 1.3,
+  bacon: 0.7
+};
 
 export default class BurgerBuilder extends Component {
-  state = {
+  state: State = {
     ingredients: {
-      salad: 1,
-      bacon: 1,
-      cheese: 2,
-      meat: 2
+      salad: 0,
+      bacon: 0,
+      cheese: 0,
+      meat: 0
+    },
+    totalPrice: 4
+  };
+
+  addIngredientHandler = (type: string) => {
+    const oldCount = this.state.ingredients[type];
+    const updatedCount = oldCount + 1;
+    const updatedIngredients = {
+      ...this.state.ingredients
+    };
+    updatedIngredients[type] = updatedCount;
+
+    const priceAddition = INGREDIENT_PRICES[type];
+    const oldPrice = this.state.totalPrice;
+    const newPrice = oldPrice + priceAddition;
+    this.setState({ totalPrice: newPrice, ingredients: updatedIngredients });
+  };
+
+  removeIngredientHandler = (type: string) => {
+    const oldCount = this.state.ingredients[type];
+    const updatedCount = oldCount - 1;
+    if (oldCount <= 0) {
+      return;
     }
+    const updatedIngredients = {
+      ...this.state.ingredients
+    };
+    updatedIngredients[type] = updatedCount;
+
+    const priceDeduction = INGREDIENT_PRICES[type];
+    const oldPrice = this.state.totalPrice;
+    const newPrice = oldPrice - priceDeduction;
+    this.setState({ totalPrice: newPrice, ingredients: updatedIngredients });
   };
 
   render() {
+    const disabledInfo: DisabledInfo = {
+      salad: false,
+      cheese: false,
+      meat: false,
+      bacon: false
+    };
+
+    for (let key in this.state.ingredients) {
+      disabledInfo[key] = this.state.ingredients[key] <= 0;
+    }
     return (
       <React.Fragment>
         <Burger ingredients={this.state.ingredients} />
-        <div>Build Controls</div>
+        <BuildControls
+          ingredientAdded={this.addIngredientHandler}
+          ingredientRemoved={this.removeIngredientHandler}
+          disabledInfo={disabledInfo}
+          price={this.state.totalPrice}
+        />
       </React.Fragment>
     );
   }
