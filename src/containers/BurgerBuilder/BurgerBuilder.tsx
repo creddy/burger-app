@@ -21,6 +21,7 @@ interface DisabledInfo {
 interface State {
   ingredients: Ingredients;
   totalPrice: number;
+  purchaseable: boolean;
 }
 
 const INGREDIENT_PRICES: Ingredients = {
@@ -38,8 +39,18 @@ export default class BurgerBuilder extends Component {
       cheese: 0,
       meat: 0
     },
-    totalPrice: 4
+    totalPrice: 4,
+    purchaseable: false
   };
+
+  updatePurchaseState(ingredients: Ingredients) {
+    const sum = Object.values(ingredients).reduce(
+      (total, num) => total + num,
+      0
+    );
+
+    this.setState({ purchaseable: sum > 0 });
+  }
 
   addIngredientHandler = (type: string) => {
     const oldCount = this.state.ingredients[type];
@@ -53,6 +64,7 @@ export default class BurgerBuilder extends Component {
     const oldPrice = this.state.totalPrice;
     const newPrice = oldPrice + priceAddition;
     this.setState({ totalPrice: newPrice, ingredients: updatedIngredients });
+    this.updatePurchaseState(updatedIngredients);
   };
 
   removeIngredientHandler = (type: string) => {
@@ -70,6 +82,7 @@ export default class BurgerBuilder extends Component {
     const oldPrice = this.state.totalPrice;
     const newPrice = oldPrice - priceDeduction;
     this.setState({ totalPrice: newPrice, ingredients: updatedIngredients });
+    this.updatePurchaseState(updatedIngredients);
   };
 
   render() {
@@ -91,6 +104,7 @@ export default class BurgerBuilder extends Component {
           ingredientRemoved={this.removeIngredientHandler}
           disabledInfo={disabledInfo}
           price={this.state.totalPrice}
+          purchaseable={this.state.purchaseable}
         />
       </React.Fragment>
     );

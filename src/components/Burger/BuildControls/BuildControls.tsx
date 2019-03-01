@@ -22,6 +22,7 @@ interface Props {
   ingredientRemoved(type: string): void;
   disabledInfo: DisabledInfo;
   price: number;
+  purchaseable: boolean;
 }
 
 const buildControls = (props: Props) => (
@@ -38,6 +39,9 @@ const buildControls = (props: Props) => (
         disabled={props.disabledInfo[control.type]}
       />
     ))}
+    <button className={styles.OrderButton} disabled={!props.purchaseable}>
+      ORDER NOW
+    </button>
   </div>
 );
 
