@@ -3,14 +3,17 @@ import styles from "./Modal.module.css";
 import Backdrop from "../Backdrop/Backdrop";
 
 interface Props {
-  children: JSX.Element[] | JSX.Element;
+  children: JSX.Element[] | JSX.Element | null;
   show: boolean;
   modalClosed(): void;
 }
 
 class Modal extends Component<Props> {
   shouldComponentUpdate(nextProps: Props) {
-    return nextProps.show !== this.props.show;
+    return (
+      nextProps.show !== this.props.show ||
+      nextProps.children !== this.props.children
+    );
   }
   render() {
     return (
