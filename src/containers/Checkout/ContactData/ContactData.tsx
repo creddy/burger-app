@@ -7,6 +7,7 @@ import Spinner from "../../../components/UI/Spinner/Spinner";
 import { RouteComponentProps } from "react-router-dom";
 import Input from "../../../components/UI/Input/Input";
 import Select from "../../../components/UI/Input/Select";
+import { SelectElementConfig } from "../../../components/UI/Input/Select";
 
 interface Props extends RouteComponentProps {
   ingredients: Ingredients;
@@ -17,7 +18,7 @@ interface OrderFormElementConfig {
   id: string;
   elementLabel: string;
   elementType: Function;
-  elementConfig: object;
+  elementConfig: React.HTMLProps<HTMLInputElement> | SelectElementConfig;
   value: string;
 }
 
@@ -38,35 +39,39 @@ class ContactData extends Component<Props, State> {
         id: "name",
         elementLabel: "name",
         elementType: Input,
-        elementConfig: { type: "text", placeholder: "Your Name" },
+        elementConfig: { type: "text", placeholder: "Your Name", options: [] },
         value: ""
       },
       {
         id: "street",
         elementLabel: "street",
         elementType: Input,
-        elementConfig: { type: "text", placeholder: "Street" },
+        elementConfig: { type: "text", placeholder: "Street", options: [] },
         value: ""
       },
       {
         id: "zipCode",
         elementLabel: "zipCode",
         elementType: Input,
-        elementConfig: { type: "text", placeholder: "ZIP Code" },
+        elementConfig: { type: "text", placeholder: "ZIP Code", options: [] },
         value: ""
       },
       {
         id: "country",
         elementLabel: "country",
         elementType: Input,
-        elementConfig: { type: "text", placeholder: "Country" },
+        elementConfig: { type: "text", placeholder: "Country", options: [] },
         value: ""
       },
       {
         id: "email",
         elementLabel: "email",
         elementType: Input,
-        elementConfig: { type: "email", placeholder: "Your E-Mail" },
+        elementConfig: {
+          type: "email",
+          placeholder: "Your E-Mail",
+          options: []
+        },
         value: ""
       },
       {
@@ -102,7 +107,9 @@ class ContactData extends Component<Props, State> {
   };
 
   inputChangedHandler = (
-    event: React.ChangeEvent<HTMLInputElement>,
+    event:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.ChangeEvent<HTMLSelectElement>,
     inputIdentifier: string
   ) => {
     const updatedOrderForm = Array.from(this.state.orderForm);
@@ -116,26 +123,21 @@ class ContactData extends Component<Props, State> {
   };
 
   render() {
-    const formElementArray: OrderFormElement[] = [];
-    for (let key in this.state.orderForm) {
-      formElementArray.push({
-        id: this.state.orderForm[key].id,
-        config: this.state.orderForm[key]
-      });
-    }
     let form = (
       <form>
-        {formElementArray.map(formElement => {
-          const TagName = formElement.config.elementType;
+        {this.state.orderForm.map(element => {
+          const TagName = element.elementType;
           return (
             <TagName
-              key={formElement.id}
-              label={formElement.config.elementLabel}
-              elementConfig={formElement.config.elementConfig}
-              value={formElement.config.value}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                this.inputChangedHandler(event, formElement.id)
-              }
+              key={element.id}
+              label={element.elementLabel}
+              elementConfig={element.elementConfig}
+              value={element.value}
+              onChange={(
+                event:
+                  | React.ChangeEvent<HTMLInputElement>
+                  | React.ChangeEvent<HTMLSelectElement>
+              ) => this.inputChangedHandler(event, element.id)}
             />
           );
         })}

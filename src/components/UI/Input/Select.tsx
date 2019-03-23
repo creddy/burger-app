@@ -6,16 +6,15 @@ interface Option {
   displayValue: string;
 }
 
-interface ElementConfig {
+export interface SelectElementConfig {
   options: Option[];
 }
 
 interface Props {
-  inputType: string;
   label: string;
-  elementConfig: ElementConfig;
+  elementConfig: SelectElementConfig;
   value: string;
-  onChange(): void;
+  onChange(event: React.ChangeEvent<HTMLSelectElement>): void;
 }
 
 const input = (props: Props) => {
