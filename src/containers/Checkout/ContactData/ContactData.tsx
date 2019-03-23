@@ -14,6 +14,7 @@ interface Props extends RouteComponentProps {
 }
 
 interface OrderFormElementConfig {
+  id: string;
   elementLabel: string;
   elementType: Function;
   elementConfig: object;
@@ -34,36 +35,42 @@ class ContactData extends Component<Props, State> {
   state = {
     orderForm: [
       {
+        id: "name",
         elementLabel: "name",
         elementType: Input,
         elementConfig: { type: "text", placeholder: "Your Name" },
         value: ""
       },
       {
+        id: "street",
         elementLabel: "street",
         elementType: Input,
         elementConfig: { type: "text", placeholder: "Street" },
         value: ""
       },
       {
+        id: "zipCode",
         elementLabel: "zipCode",
         elementType: Input,
         elementConfig: { type: "text", placeholder: "ZIP Code" },
         value: ""
       },
       {
+        id: "country",
         elementLabel: "country",
         elementType: Input,
         elementConfig: { type: "text", placeholder: "Country" },
         value: ""
       },
       {
+        id: "email",
         elementLabel: "email",
         elementType: Input,
         elementConfig: { type: "email", placeholder: "Your E-Mail" },
         value: ""
       },
       {
+        id: "deliveryMethod",
         elementLabel: "deliveryMethod",
         elementType: Select,
         elementConfig: {
@@ -94,11 +101,25 @@ class ContactData extends Component<Props, State> {
       .catch(error => this.setState({ loading: false }));
   };
 
+  inputChangedHandler = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    inputIdentifier: string
+  ) => {
+    const updatedOrderForm = Array.from(this.state.orderForm);
+    const index = updatedOrderForm.findIndex(element => {
+      return element.id === inputIdentifier;
+    });
+    const updatedFormElement = { ...updatedOrderForm[index] };
+    updatedFormElement.value = event.target.value;
+    updatedOrderForm[index] = updatedFormElement;
+    this.setState({ orderForm: updatedOrderForm });
+  };
+
   render() {
     const formElementArray: OrderFormElement[] = [];
     for (let key in this.state.orderForm) {
       formElementArray.push({
-        id: key,
+        id: this.state.orderForm[key].id,
         config: this.state.orderForm[key]
       });
     }
@@ -112,6 +133,9 @@ class ContactData extends Component<Props, State> {
               label={formElement.config.elementLabel}
               elementConfig={formElement.config.elementConfig}
               value={formElement.config.value}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                this.inputChangedHandler(event, formElement.id)
+              }
             />
           );
         })}

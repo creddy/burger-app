@@ -5,6 +5,7 @@ interface Props {
   label: string;
   elementConfig: React.HTMLProps<HTMLInputElement>;
   value: string;
+  onChange(): void;
 }
 
 const input = (props: Props) => {
@@ -12,6 +13,7 @@ const input = (props: Props) => {
     <div className={styles.Input}>
       <label className={styles.Label}>{props.label}</label>
       <input
+        onChange={props.onChange}
         className={styles.InputElement}
         {...props.elementConfig}
         value={props.value}
