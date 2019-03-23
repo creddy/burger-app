@@ -5,20 +5,76 @@ import { Ingredients } from "../../../components/Burger/Burger";
 import axios from "../../../axios-orders";
 import Spinner from "../../../components/UI/Spinner/Spinner";
 import { RouteComponentProps } from "react-router-dom";
+import Input from "../../../components/UI/Input/Input";
+import Select from "../../../components/UI/Input/Select";
 
 interface Props extends RouteComponentProps {
   ingredients: Ingredients;
   price: number;
 }
 
-class ContactData extends Component<Props> {
+interface OrderFormElementConfig {
+  elementLabel: string;
+  elementType: Function;
+  elementConfig: object;
+  value: string;
+}
+
+interface OrderFormElement {
+  id: string;
+  config: OrderFormElementConfig;
+}
+
+interface State {
+  orderForm: OrderFormElementConfig[];
+  loading: boolean;
+}
+
+class ContactData extends Component<Props, State> {
   state = {
-    name: "",
-    email: "",
-    address: {
-      street: "",
-      postalCode: ""
-    },
+    orderForm: [
+      {
+        elementLabel: "name",
+        elementType: Input,
+        elementConfig: { type: "text", placeholder: "Your Name" },
+        value: ""
+      },
+      {
+        elementLabel: "street",
+        elementType: Input,
+        elementConfig: { type: "text", placeholder: "Street" },
+        value: ""
+      },
+      {
+        elementLabel: "zipCode",
+        elementType: Input,
+        elementConfig: { type: "text", placeholder: "ZIP Code" },
+        value: ""
+      },
+      {
+        elementLabel: "country",
+        elementType: Input,
+        elementConfig: { type: "text", placeholder: "Country" },
+        value: ""
+      },
+      {
+        elementLabel: "email",
+        elementType: Input,
+        elementConfig: { type: "email", placeholder: "Your E-Mail" },
+        value: ""
+      },
+      {
+        elementLabel: "deliveryMethod",
+        elementType: Select,
+        elementConfig: {
+          options: [
+            { value: "fastest", displayValue: "Fastest" },
+            { value: "cheapest", displayValue: "Cheapest" }
+          ]
+        },
+        value: ""
+      }
+    ],
     loading: false
   };
 
@@ -27,17 +83,7 @@ class ContactData extends Component<Props> {
     this.setState({ loading: true });
     const order = {
       ingredients: this.props.ingredients,
-      price: this.props.price,
-      customer: {
-        name: "Chethan Reddy",
-        address: {
-          street: "Teststreet 1",
-          zipCode: "12345",
-          country: "US"
-        },
-        email: "test@test.com"
-      },
-      deliveryMethod: "fastest"
+      price: this.props.price
     };
     axios
       .post("/orders.json", order)
@@ -49,32 +95,26 @@ class ContactData extends Component<Props> {
   };
 
   render() {
+    const formElementArray: OrderFormElement[] = [];
+    for (let key in this.state.orderForm) {
+      formElementArray.push({
+        id: key,
+        config: this.state.orderForm[key]
+      });
+    }
     let form = (
       <form>
-        <input
-          className={styles.Input}
-          type="text"
-          name="name"
-          placeholder="Your Name"
-        />
-        <input
-          className={styles.Input}
-          type="email"
-          name="email"
-          placeholder="Your Mail"
-        />
-        <input
-          className={styles.Input}
-          type="text"
-          name="street"
-          placeholder="Street"
-        />
-        <input
-          className={styles.Input}
-          type="text"
-          name="postal"
-          placeholder="Postal Code"
-        />
+        {formElementArray.map(formElement => {
+          const TagName = formElement.config.elementType;
+          return (
+            <TagName
+              key={formElement.id}
+              label={formElement.config.elementLabel}
+              elementConfig={formElement.config.elementConfig}
+              value={formElement.config.value}
+            />
+          );
+        })}
         <Button btnType="Success" clicked={this.orderHandler}>
           ORDER
         </Button>
