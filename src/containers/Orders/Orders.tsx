@@ -1,10 +1,21 @@
 import React, { Component } from "react";
-
 import Order from "../../components/Order/Order";
 import axios from "../../axios-orders";
 import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
+import { Ingredients } from "../../components/Burger/Burger";
 
-class Orders extends Component {
+interface Order {
+  id: string;
+  ingredients: Ingredients;
+  price: number;
+}
+
+interface State {
+  orders: Order[];
+  loading: boolean;
+}
+
+class Orders extends Component<State> {
   state = {
     orders: [],
     loading: true
@@ -27,8 +38,15 @@ class Orders extends Component {
   render() {
     return (
       <div>
-        <Order />
-        <Order />
+        {this.state.orders.map((order: Order) => {
+          return (
+            <Order
+              key={order.id}
+              ingredients={order.ingredients}
+              price={order.price}
+            />
+          );
+        })}
       </div>
     );
   }
