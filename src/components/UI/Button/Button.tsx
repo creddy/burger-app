@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./Button.module.css";
 
 interface Props {
-  clicked(): void;
+  clicked(event: React.MouseEvent<HTMLButtonElement> | null): void;
   children: JSX.Element[] | JSX.Element | string;
   btnType: "Danger" | "Success";
 }
